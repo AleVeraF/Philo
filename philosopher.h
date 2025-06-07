@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   philosopher.h                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: alvera-f <alvera-f@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/06/07 16:47:15 by alvera-f          #+#    #+#             */
+/*   Updated: 2025/06/07 18:14:39 by alvera-f         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef PHILOSOPHER_H
 # define PHILOSOPHER_H
 
@@ -63,6 +75,8 @@ int		main(int argc, char **argv);
 int		parse_args(int argc, char **argv, t_args *args);
 int		init_data(t_data *data, t_args *args);
 int		start_threads(t_data *data);
+int	join_threads(t_data *data);
+int	start_simulation(t_args *args);
 
 // ------------------ UTILIDADES ------------------
 

@@ -1,9 +1,22 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   philo.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: alvera-f <alvera-f@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/06/07 16:46:21 by alvera-f          #+#    #+#             */
+/*   Updated: 2025/06/07 18:39:36 by alvera-f         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "philosopher.h"
 
 void	*routine(void *arg)
 {
-	t_philo	*philo = (t_philo *)arg;
+	t_philo	*philo;
 
+	philo = (t_philo *)arg;
 	if (philo->id % 2 == 0)
 		usleep(1000);
 	while (1)
@@ -12,25 +25,23 @@ void	*routine(void *arg)
 		if (philo->data->someone_died)
 		{
 			pthread_mutex_unlock(&philo->data->meal_check_mutex);
-			break;
+			break ;
 		}
 		pthread_mutex_unlock(&philo->data->meal_check_mutex);
-
 		philo_think(philo);
 		philo_eat(philo);
-
-		if (philo->args->n_times_must_eat > 0 && philo->meals_eaten >= philo->args->n_times_must_eat)
+		if (philo->args->n_times_must_eat > 0
+			&& philo->meals_eaten >= philo->args->n_times_must_eat)
 		{
 			pthread_mutex_lock(&philo->data->all_ate_mutex);
 			philo->data->all_ate++;
 			pthread_mutex_unlock(&philo->data->all_ate_mutex);
-			break;
+			break ;
 		}
 		philo_sleep(philo);
 	}
 	return (NULL);
 }
-
 
 int	start_threads(t_data *data)
 {
@@ -41,22 +52,21 @@ int	start_threads(t_data *data)
 	while (i < data->n_philos)
 	{
 		data->philos[i].last_meal = data->start_time;
-		if (pthread_create(&data->threads[i], NULL, routine, &data->philos[i]) != 0)
+		if (pthread_create(&data->threads[i],
+				NULL, routine, &data->philos[i]) != 0)
 			return (printf("Error: creating thread for philo %d\n", i + 1), 1);
 		i++;
 	}
 	return (0);
 }
 
-
-
-long get_time_in_ms(void)
+long	get_time_in_ms(void)
 {
-    struct timeval time;
-    gettimeofday(&time, NULL);
-    return (time.tv_sec * 1000) + (time.tv_usec / 1000); // Convertir a milisegundos
-}
+	struct timeval	time;
 
+	gettimeofday(&time, NULL);
+	return ((time.tv_sec * 1000) + (time.tv_usec / 1000));
+}
 
 int	init_data(t_data *data, t_args *args)
 {
@@ -70,18 +80,15 @@ int	init_data(t_data *data, t_args *args)
 	data->start_time = 0;
 	data->someone_died = 0;
 	data->all_ate = 0;
-
 	data->forks = malloc(sizeof(pthread_mutex_t) * data->n_philos);
 	data->philos = malloc(sizeof(t_philo) * data->n_philos);
 	data->threads = malloc(sizeof(pthread_t) * data->n_philos);
 	if (!data->forks || !data->philos || !data->threads)
 		return (printf("Error: malloc\n"), 1);
-
 	if (pthread_mutex_init(&data->print, NULL) != 0
 		|| pthread_mutex_init(&data->meal_check_mutex, NULL) != 0
 		|| pthread_mutex_init(&data->all_ate_mutex, NULL) != 0)
 		return (printf("Error: init mutex\n"), 1);
-
 	i = 0;
 	while (i < data->n_philos)
 	{
@@ -99,7 +106,6 @@ int	init_data(t_data *data, t_args *args)
 	return (0);
 }
 
-
 void	free_data(t_data *data)
 {
 	int	i;
@@ -113,16 +119,7 @@ void	free_data(t_data *data)
 	pthread_mutex_destroy(&data->print);
 	pthread_mutex_destroy(&data->meal_check_mutex);
 	pthread_mutex_destroy(&data->all_ate_mutex);
-
 	free(data->forks);
 	free(data->philos);
 	free(data->threads);
 }
-
-
-
-
-
-
-
-

@@ -1,11 +1,26 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   aux.c                                              :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: alvera-f <alvera-f@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/06/07 16:45:40 by alvera-f          #+#    #+#             */
+/*   Updated: 2025/06/07 16:55:35 by alvera-f         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "philosopher.h"
 
 int	ft_atoi(const char *str)
 {
-	int				i = 0;
-	int				sign = 1;
-	long long int	result = 0;
+	int				i;
+	int				sign;
+	long long int	result;
 
+	i = 0;
+	sign = 1;
+	result = 0;
 	while (str[i] == ' ' || (str[i] >= 9 && str[i] <= 13))
 		i++;
 	if (str[i] == '-' || str[i] == '+')
@@ -26,8 +41,9 @@ int	ft_atoi(const char *str)
 
 int	is_number(char *str)
 {
-	int	i = 0;
+	int	i;
 
+	i = 0;
 	if (!str || !str[0])
 		return (0);
 	if (str[i] == '+')
@@ -40,4 +56,3 @@ int	is_number(char *str)
 	}
 	return (1);
 }
-
