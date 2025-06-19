@@ -87,11 +87,17 @@ long long	get_time(void);
 void		ft_usleep(long long time_in_ms);
 void		print(t_philo *philo, char *msg);
 void	free_data(t_data *data);
+void	print_status(t_philo *philo, const char *status);
+int	init_philos_and_forks(t_data *data, t_args *args);
+
 
 // ------------------ RUTINA ------------------
 
 void		*routine(void *arg);
+void	philo_loop(t_philo *philo);
 void		*monitor_philos(void *arg);
+int	check_all_philos_ate(t_data *data);
+int	check_philo_death(t_data *data, int i);
 
 // ------------------ ACCIONES DEL FILÓSOFO ------------------
 

@@ -59,12 +59,44 @@ void	philo_sleep(t_philo *philo)
 	ft_usleep(philo->data->time_to_sleep);
 }
 
+int	check_philo_death(t_data *data, int i)
+{
+	long	now;
 
+	pthread_mutex_lock(&data->meal_check_mutex);
+	now = get_time();
+	if ((now - data->philos[i].last_meal >= data->time_to_die))
+	{
+		data->someone_died = 1;
+		pthread_mutex_unlock(&data->meal_check_mutex);
+		pthread_mutex_lock(&data->print);
+		printf("%lld %d died\n", now - data->start_time, data->philos[i].id);
+		pthread_mutex_unlock(&data->print);
+		return (1);
+	}
+	pthread_mutex_unlock(&data->meal_check_mutex);
+	return (0);
+}
+
+int	check_all_philos_ate(t_data *data)
+{
+	if (data->must_eat > 0)
+	{
+		pthread_mutex_lock(&data->all_ate_mutex);
+		if (data->all_ate >= data->n_philos)
+		{
+			data->someone_died = 1;
+			pthread_mutex_unlock(&data->all_ate_mutex);
+			return (1);
+		}
+		pthread_mutex_unlock(&data->all_ate_mutex);
+	}
+	return (0);
+}
 
 void	*monitor_philos(void *arg)
 {
 	t_data	*data = (t_data *)arg;
-	long	now;
 	int		i;
 
 	while (1)
@@ -72,37 +104,16 @@ void	*monitor_philos(void *arg)
 		i = 0;
 		while (i < data->n_philos)
 		{
-			pthread_mutex_lock(&data->meal_check_mutex);
-			now = get_time();
-			if ((now - data->philos[i].last_meal >= data->time_to_die))
-			{
-				data->someone_died = 1;
-				pthread_mutex_unlock(&data->meal_check_mutex);
-				pthread_mutex_lock(&data->print);
-				printf("%lld %d died\n", now - data->start_time, data->philos[i].id);
-				pthread_mutex_unlock(&data->print);
+			if (check_philo_death(data, i))
 				return (NULL);
-			}
-			pthread_mutex_unlock(&data->meal_check_mutex);
 			i++;
 		}
-
-		if (data->must_eat > 0)
-		{
-			pthread_mutex_lock(&data->all_ate_mutex);
-			if (data->all_ate >= data->n_philos)
-			{
-				data->someone_died = 1;
-				pthread_mutex_unlock(&data->all_ate_mutex);
-				return (NULL);
-			}
-			pthread_mutex_unlock(&data->all_ate_mutex);
-		}
-		usleep(500); // Evita busy-waiting
+		if (check_all_philos_ate(data))
+			return (NULL);
+		usleep(500);
 	}
 	return (NULL);
 }
-
 
 void	print(t_philo *philo, char *msg)
 {
